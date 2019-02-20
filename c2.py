@@ -14,12 +14,14 @@ sub_appliances = ['Clothes dryers, water heaters, self-heating washing machines,
 result_list = []
 
 class Application(Frame):
-    aValue = 0
+    aValue = bvalue = 0
     bValue = 0
     cValue = 0
     dValue = 0
     eValue = 0
     fValue = 0
+    gValue = 0
+    hValue = 0
     iValue = 0
     jValue = 0
 
@@ -329,7 +331,7 @@ class Application(Frame):
                      
             def sockets(self):
                 self.amps = 0
-                self.bValue = 0
+
 
                 if (getLoadgroup(self)==sub_outlets[0]):
 
@@ -492,7 +494,7 @@ class Application(Frame):
         def calculations():
 
             def getUnit(self): #get values
-                self.x = int(self.entry_unit.get())
+                self.x = int(self.entry_unit.get())                   
                 return self.x
             def getLoadgroup(self):
                 self.x = self.cntrl_loadgroup.get()
@@ -734,13 +736,9 @@ class Application(Frame):
                 
                 
         def update ():
-            total_sum = self.aValue
+            total_sum = self.aValue + self.bValue + self.cValue + self.dValue + self.eValue + self.fValue 
 
-            self.total.config(text = total_sum)
-
-
-                    
-            
+            self.total.config(text = total_sum,bg='green2', borderwidth="2", relief="sunken", height = 1, width=20)
 
 
         #ADD BUTTONS#
