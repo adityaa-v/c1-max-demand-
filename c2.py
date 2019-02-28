@@ -1,20 +1,33 @@
 from tkinter import *
 from tkinter import ttk
+import xlsxwriter
 
-load_groups = ['Appliances (c)', 'Heating/Cooling (d)', 'Instant Water Heaters (e)', 'Storage Water Heaters (f)',
-'Spa and swimming pool heaters (g)', 'Communal lighting (h)','Socket (i)', 'Lifts (k)',
+load_groups = ['(a) Lighting','     (i) Lighting except for communial lighting and <1000W','     (ii) Outdoor lighting exceeding a total of 1000W', '(b) Sub-outlets',
+'     (i) Socket outlets not exceeding 10 A','     (ii) 1 or more 15 A socket outlets','     (iii) 1 or more 20 A socket outlets',  
+'Appliances (c)', 'Heating/Cooling (d)', 'Instant Water Heaters (e)', 'Storage Water Heaters (f)',
+'Spa and swimming pool heaters (g)', 'Communal lighting (h)','Socket (i)','(j) Appliances','     (i) clothes dryer, water heaters, self-heating washing machines, wash boilers',
+'     (ii) Fixed space heating, airconditioning equipment, saunas','     (iii) Spa and swimming pool heaters','     (iv) Charging equipment associated with electric vehicles',  'Lifts (k)',
 'Motors (l)', 'Other Appliances (m)']
 sub_lighitng = ["lighting except for communial lighting and <1000W ", 
 "Outdoor lighting exceeding a total of 1000 W"]
 sub_outlets = ["Socket outlets not exceeding 10 A", 
-"One or more 15 A socket outlets",
-"One or more 20 A socket outlets"]
+"1 or more 15 A socket outlets",
+"1 or more 20 A socket outlets"]
 sub_appliances = ['Clothes dryers, water heaters, self-heating washing machines, wash boilers', 'Fixed space heating, airconditioning equipment, saunas',
-'Spa and swimming pool heaters', 'Charging equipment associated with electric vehicles']
+'Spa and swimming pool heaters','Charging equipment associated with electric vehicles']
 result_list = []
 
 class Application(Frame):
-    aValue = bvalue = 0
+    light_points = 0
+    light_watts = 0
+    outlets_points = 0
+    outlets_watts = 0
+    subappliances_points = 0
+    subappliances_watts = 0
+    general_points = 0
+    general_watts = 0
+
+    aValue = 0
     bValue = 0
     cValue = 0
     dValue = 0
@@ -29,6 +42,8 @@ class Application(Frame):
         """ Initialise the Frame. """
         super(Application, self).__init__(master)
         self.init_window()
+
+    
 
     def init_window(self): 
 
@@ -88,87 +103,87 @@ class Application(Frame):
 
         #TAB 2 LIGHTING
 
-        self.tab2_living_units = Label (self.tab2, text = self.entry_unit.get(), height=1, width=20, font='Helvetica 12 bold') #Label
-        self.tab2_living_units.grid(row=1, columnspan=2)
+        # self.tab2_living_units = Label (self.tab2, text = self.entry_unit.get(), height=1, width=20, font='Helvetica 12 bold') #Label
+        # self.tab2_living_units.grid(row=1, columnspan=2)
       
-        self.tab2_lbl_options = Label (self.tab2, text = "Options: ", height = 1, width=20)
-        self.tab2_lbl_options.grid(row=2, column=0)
+        # self.tab2_lbl_options = Label (self.tab2, text = "Options: ", height = 1, width=20)
+        # self.tab2_lbl_options.grid(row=2, column=0)
 
-        self.cntrl_lighting = StringVar(control) #LIGHTING DROP DOWN BOX
-        self.cntrl_lighting.set("-") # default value
-        self.om_lighting = OptionMenu(self.tab2, self.cntrl_lighting, *sub_lighitng, )
-        self.om_lighting.config(width=35)
-        self.om_lighting.grid(row=2, column=1)
+        # self.cntrl_lighting = StringVar(control) #LIGHTING DROP DOWN BOX
+        # self.cntrl_lighting.set("-") # default value
+        # self.om_lighting = OptionMenu(self.tab2, self.cntrl_lighting, *sub_lighitng, )
+        # self.om_lighting.config(width=35)
+        # self.om_lighting.grid(row=2, column=1)
 
-        self.tab2_lbl_points = Label (self.tab2, text = "Points", height=1, width=20) #Label
-        self.tab2_lbl_points.grid(row=4, column = 0)
+        # self.tab2_lbl_points = Label (self.tab2, text = "Points", height=1, width=20) #Label
+        # self.tab2_lbl_points.grid(row=4, column = 0)
 
-        self.tab2_lbl_watts = Label (self.tab2, text = "Watts", height=1, width=20) #Label
-        self.tab2_lbl_watts.grid(row=5, column = 0)
+        # self.tab2_lbl_watts = Label (self.tab2, text = "Watts", height=1, width=20) #Label
+        # self.tab2_lbl_watts.grid(row=5, column = 0)
 
-        self.tab2_entry_watts = StringVar()  
-        self.tab2_entry_watts = Entry (self.tab2) ######## ENTRY BOX
-        self.tab2_entry_watts.grid(row=5, column=1)
+        # self.tab2_entry_watts = StringVar()  
+        # self.tab2_entry_watts = Entry (self.tab2) ######## ENTRY BOX
+        # self.tab2_entry_watts.grid(row=5, column=1)
         
-        self.tab2_entry_points = StringVar()  
-        self.tab2_entry_points = Entry (self.tab2) ######## ENTRY BOX
-        self.tab2_entry_points.grid(row=4, column=1)
+        # self.tab2_entry_points = StringVar()  
+        # self.tab2_entry_points = Entry (self.tab2) ######## ENTRY BOX
+        # self.tab2_entry_points.grid(row=4, column=1)
 
-        #TAB 3 SOCKET
+        # #TAB 3 SOCKET
 
-        self.tab3_living_units = Label (self.tab3, text = self.entry_unit.get(), height=1, width=20, font='Helvetica 12 bold') #Label
-        self.tab3_living_units.grid(row=1, columnspan=2)
+        # self.tab3_living_units = Label (self.tab3, text = self.entry_unit.get(), height=1, width=20, font='Helvetica 12 bold') #Label
+        # self.tab3_living_units.grid(row=1, columnspan=2)
       
-        self.tab3_lbl_options = Label (self.tab3, text = "Options: ", height = 1, width=20)
-        self.tab3_lbl_options.grid(row=2, column=0)
+        # self.tab3_lbl_options = Label (self.tab3, text = "Options: ", height = 1, width=20)
+        # self.tab3_lbl_options.grid(row=2, column=0)
 
-        self.cntrl_socket = StringVar(control) #LIGHTING DROP DOWN BOX
-        self.cntrl_socket.set("-") # default value
-        self.om_socket = OptionMenu(self.tab3, self.cntrl_socket, *sub_outlets)
-        self.om_socket.config(width=35)
-        self.om_socket.grid(row=2, column=1)
+        # self.cntrl_socket = StringVar(control) #LIGHTING DROP DOWN BOX
+        # self.cntrl_socket.set("-") # default value
+        # self.om_socket = OptionMenu(self.tab3, self.cntrl_socket, *sub_outlets)
+        # self.om_socket.config(width=35)
+        # self.om_socket.grid(row=2, column=1)
 
-        self.tab3_lbl_points = Label (self.tab3, text = "Points", height=1, width=20) #Label
-        self.tab3_lbl_points.grid(row=4, column = 0)
+        # self.tab3_lbl_points = Label (self.tab3, text = "Points", height=1, width=20) #Label
+        # self.tab3_lbl_points.grid(row=4, column = 0)
 
-        self.tab3_lbl_watts = Label (self.tab3, text = "Watts", height=1, width=20) #Label
-        self.tab3_lbl_watts.grid(row=5, column = 0)
+        # self.tab3_lbl_watts = Label (self.tab3, text = "Watts", height=1, width=20) #Label
+        # self.tab3_lbl_watts.grid(row=5, column = 0)
 
-        self.tab3_entry_watts = StringVar()  
-        self.tab3_entry_watts = Entry (self.tab3) ######## ENTRY BOX
-        self.tab3_entry_watts.grid(row=5, column=1)
+        # self.tab3_entry_watts = StringVar()  
+        # self.tab3_entry_watts = Entry (self.tab3) ######## ENTRY BOX
+        # self.tab3_entry_watts.grid(row=5, column=1)
         
-        self.tab3_entry_points = StringVar()  
-        self.tab3_entry_points = Entry (self.tab3) ######## ENTRY BOX
-        self.tab3_entry_points.grid(row=4, column=1)
+        # self.tab3_entry_points = StringVar()  
+        # self.tab3_entry_points = Entry (self.tab3) ######## ENTRY BOX
+        # self.tab3_entry_points.grid(row=4, column=1)
 
-        #TAB 4 APPLIANCES
+        # #TAB 4 APPLIANCES
 
-        self.tab4_living_units = Label (self.tab4, text = self.entry_unit.get(), height=1, width=20, font='Helvetica 12 bold') #Label
-        self.tab4_living_units.grid(row=1, columnspan=2)
+        # self.tab4_living_units = Label (self.tab4, text = self.entry_unit.get(), height=1, width=20, font='Helvetica 12 bold') #Label
+        # self.tab4_living_units.grid(row=1, columnspan=2)
       
-        self.tab4_lbl_options = Label (self.tab4, text = "Options: ", height = 1, width=20)
-        self.tab4_lbl_options.grid(row=2, column=0)
+        # self.tab4_lbl_options = Label (self.tab4, text = "Options: ", height = 1, width=20)
+        # self.tab4_lbl_options.grid(row=2, column=0)
 
-        self.cntrl_appliance = StringVar(control) #LIGHTING DROP DOWN BOX
-        self.cntrl_appliance.set("-") # default value
-        self.om_appliance = OptionMenu(self.tab4, self.cntrl_appliance, *sub_appliances)
-        self.om_appliance.config(width=35)
-        self.om_appliance.grid(row=2, column=1)
+        # self.cntrl_appliance = StringVar(control) #LIGHTING DROP DOWN BOX
+        # self.cntrl_appliance.set("-") # default value
+        # self.om_appliance = OptionMenu(self.tab4, self.cntrl_appliance, *sub_appliances)
+        # self.om_appliance.config(width=35)
+        # self.om_appliance.grid(row=2, column=1)
 
-        self.tab4_lbl_points = Label (self.tab4, text = "Points", height=1, width=20) #Label
-        self.tab4_lbl_points.grid(row=4, column = 0)
+        # self.tab4_lbl_points = Label (self.tab4, text = "Points", height=1, width=20) #Label
+        # self.tab4_lbl_points.grid(row=4, column = 0)
 
-        self.tab4_lbl_watts = Label (self.tab4, text = "Watts", height=1, width=20) #Label
-        self.tab4_lbl_watts.grid(row=5, column = 0)
+        # self.tab4_lbl_watts = Label (self.tab4, text = "Watts", height=1, width=20) #Label
+        # self.tab4_lbl_watts.grid(row=5, column = 0)
 
-        self.tab4_entry_watts = StringVar()  
-        self.tab4_entry_watts = Entry (self.tab4) ######## ENTRY BOX
-        self.tab4_entry_watts.grid(row=5, column=1)
+        # self.tab4_entry_watts = StringVar()  
+        # self.tab4_entry_watts = Entry (self.tab4) ######## ENTRY BOX
+        # self.tab4_entry_watts.grid(row=5, column=1)
         
-        self.tab4_entry_points = StringVar()  
-        self.tab4_entry_points = Entry (self.tab4) ######## ENTRY BOX
-        self.tab4_entry_points.grid(row=4, column=1)
+        # self.tab4_entry_points = StringVar()  
+        # self.tab4_entry_points = Entry (self.tab4) ######## ENTRY BOX
+        # self.tab4_entry_points.grid(row=4, column=1)
 
         
         #RESULTS#
@@ -228,52 +243,314 @@ class Application(Frame):
         self.total.grid(row=14, column=0)
         self.total = Label (self.tab5, text = "yeet", height = 1, width=20)
         self.total.grid(row=14, column=1)
-        self.btn_calculations = Button (self.tab5, text="View Calculations", height=1, width=20)
-        self.btn_calculations.grid (row=15, column=0)
+        
         
 
 ###### LIGHTING BEGIN
 
-        def calculationsAll(): #LIGHTING
+        # def calculationsAll(): #LIGHTING
     
+        #     def getUnit(self): #get values
+        #         self.x = int(self.entry_unit.get())
+        #         return self.x
+
+        #     def getLoadgroup(self):
+        #         self.x = self.cntrl_lighting.get()
+        #         return self.x
+        #     def getPoints(self):
+        #         self.x = int(self.tab2_entry_points.get())
+        #         self.light_points = self.x
+        #         return self.x
+        #     def getWatts(self):
+        #         self.x = int(self.tab2_entry_watts.get())
+        #         self.light_watts = self.x
+        #         return self.x  
+                     
+        #     def lighting(self):
+        #         self.amps = 0
+                
+        #         if (getLoadgroup(self)==load_groups[0]):
+        #             if (getUnit(self)==1):
+
+        #                 if (getPoints(self)<=20):
+        #                         self.amps = (self.amps + 3)/3
+        #                         self.aValue = self.amps
+        #                         return str(self.amps)
+
+        #                 if (getPoints(self)>=40):
+        #                     self.amps = (self.amps + 5)/3
+        #                     self.aValue = self.amps
+        #                     return str(self.amps)
+        #                     if (getPoints(self)>=60):
+        #                         self.amps = (self.amps + 2)/3
+        #                         self.aValue = self.amps
+        #                         return str(self.amps)
+        #                         if (getPoints(self)>=80):
+        #                             self.amps = (self.amps + 2)/3
+        #                             self.aValue = self.amps
+        #                             return str(self.amps)
+        #                             if (getPoints(self)>=100):
+        #                                 self.amps = (self.amps + 2)/3
+        #                                 self.aValue = self.amps
+        #                                 return str(self.amps)
+                        
+        #             if (getUnit(self)>=2 and getUnit(self)<=5):#2-5
+
+        #                 self.aValue = 6
+        #                 return '6'                    
+                    
+        #             if (getUnit(self)>=6 and getUnit(self)<=20):#6-20
+
+        #                 self.excess = getUnit(self) - 6
+        #                 self.amps = (self.excess * 0.25) + 5     
+        #                 self.aValue = self.amps
+        #                 return str(self.amps)  
+
+        #             if (getUnit(self)>=21):#21+
+        #                 self.excess = getUnit(self) - 21
+        #                 self.amps = (self.excess * 0.25)   
+        #                 self.aValue = self.amps         
+        #                 return str(self.amps)  
+                             
+        #         if (getLoadgroup(self)==load_groups[1]):
+        #             if(getUnit(self)==1):
+        #                 self.amps = getWatts(self) * 0.75
+        #                 self.aValue = self.amps
+        #                 return str(self.amps)
+
+        #         else:
+        #             return 'yeet'
+                      
+        #     self.light_result = Label (self.tab5, text = ""+lighting(self), bg='green2', borderwidth="2", relief="sunken", height = 1, width=20)
+        #     self.light_result.grid(row=1, column=1)
+
+        #     self.amps = Label (self.tab2, text = lighting(self)+ " A is required for "+ getLoadgroup(self), height=1) #Label
+        #     self.amps.grid(rowspan=7, columnspan=2)
+
+###### LIGHTING END
+
+###### socket BEGIN
+
+        # def calculationsB():
+        
+        #     def getUnit(self): #get values
+        #         self.x = int(self.entry_unit.get())
+        #         return self.x
+        #     def getLoadgroup(self):
+        #         self.x = self.cntrl_socket.get()
+        #         return self.x
+        #     def getPoints(self):
+        #         self.x = int(self.tab3_entry_points.get())
+        #         self.outlets_points = self.x
+        #         return self.x
+        #     def getWatts(self):
+        #         self.x = int(self.tab3_entry_watts.get())
+        #         self.outlets_watts = self.x
+        #         return self.x  
+                     
+            # def sockets(self):
+            #     self.amps = 0
+
+            #     if (getLoadgroup(self)==sub_outlets[0]):
+
+            #         if (getUnit(self)==1):
+
+            #             if (getPoints(self)<=20):
+            #                     self.amps = self.amps + 10
+            #                     self.bValue = self.amps
+            #                     return str(self.amps)
+
+            #             if (getPoints(self)>=40):
+            #                 self.amps = self.amps + 15
+            #                 self.bValue = self.amps
+            #                 return str(self.amps)
+            #                 if (getPoints(self)>=60):
+            #                     self.amps = self.amps + 5
+            #                     self.bValue = self.amps
+            #                     return str(self.amps)
+            #                     if (getPoints(self)>=80):
+            #                         self.amps = self.amps + 5
+            #                         self.bValue = self.amps
+            #                         return str(self.amps)
+            #                         if (getPoints(self)>=100):
+            #                             self.amps = self.amps + 5
+            #                             self.bValue = self.amps
+            #                             return str(self.amps)
+                        
+            #         if (getUnit(self)>=2 and getUnit(self)<=5):#2-5
+
+            #             if (getUnit(self)==2):
+            #                 self.amps = 10
+            #                 self.bValue = self.amps
+            #                 return str(self.amps)
+            #             if(getUnit(self)>=3 and getUnit(self)<=5):
+            #                 self.amps = (getUnit(self) - 1 ) *  5
+            #                 self.amps = self.amps +10
+            #                 self.bValue = self.amps
+            #                 return str(self.amps)
+            #             else: 
+            #                 return "you is a bum"
+                    
+                    
+            #         if (getUnit(self)>=6 and getUnit(self)<=20):#6-20
+
+            #             if (getUnit(self)==6):
+            #                 self.amps = 15
+            #                 self.bValue = self.amps
+            #                 return str(self.amps)
+            #             if(getUnit(self)>=7 and getUnit(self)<=20):
+            #                 self.amps = (getUnit(self) - 1 ) *  3.75
+            #                 self.amps = self.amps = 15
+            #                 self.bValue = self.amps
+            #                 return str(self.amps)
+            #             else: 
+            #                 return "you is a bum"
+
+            #         if (getUnit(self)>=21):#21+
+            #             if (getUnit(self)==21):
+            #                 self.amps = 50
+            #                 self.bValue = self.amps
+            #                 return str(self.amps)
+            #             if(getUnit(self)>=22):
+            #                 self.amps = (getUnit(self) - 1 ) *  1.9
+            #                 self.amps = self.amps + 50
+            #                 self.bValue = self.amps
+            #                 return str(self.amps)
+            #             else: 
+            #                 return "you is a bum"
+                             
+            #     if (getLoadgroup(self)==sub_outlets[1]):
+            #         self.bValue = 10
+            #         return "10"
+            #     if (getLoadgroup(self)==sub_outlets[2]):
+            #         self.bValue = 15
+            #         return "15"
+                
+            #     else:
+            #         return 'yeet'
+            # if (sockets(self)!='yeet'):          
+            #     self.light_result = Label (self.tab5, text = ""+sockets(self), bg='green2', borderwidth="2", relief="sunken", height = 1, width=20)
+            #     self.light_result.grid(row=2, column=1)
+                
+                
+            #     self.amps = Label (self.tab3, text = sockets(self)+ " A is required for "+ getLoadgroup(self), height=1) #Label
+            #     self.amps.grid(rowspan=7, columnspan=2)
+
+
+
+######appliance begin
+ 
+        # def calculationsJ():
+        
+        #     def getUnit(self): #get values
+        #         self.x = int(self.entry_unit.get())
+        #         return self.x
+        #     def getLoadgroup(self):
+        #         self.x = self.cntrl_appliance.get()
+        #         return self.x
+        #     def getPoints(self):
+        #         self.x = int(self.tab4_entry_points.get())
+        #         self.subappliances_points = self.x
+        #         return self.x
+        #     def getWatts(self):
+        #         self.x = int(self.tab4_entry_watts.get())
+        #         self.subappliances_points = self.x
+        #         return self.x  
+                     
+        #     def appliances(self):
+        #         self.amps = 0
+        #         self.aValuejValue = 0
+                             
+        #         if (getLoadgroup(self)==sub_appliances[0] or getLoadgroup(self)==sub_appliances[1] or getLoadgroup(self)==sub_appliances[2]):
+        #             if (getUnit(self) == 1):
+        #                 return "Not applicable"
+
+        #         if (getLoadgroup(self)==sub_appliances[3]):
+        #             if (getUnit(self) == 1):
+        #                 return "Fully connected load"
+
+        #         if (getLoadgroup(self) ==sub_appliances[0]):
+        #             if getUnit(self)>=2:
+        #                 self.amps = getWatts(self)                       
+        #                 self.amps= self.amps * 0.5
+        #                 self.jValue = self.amps
+        #                 return str(self.amps)
+                
+        #         if (getLoadgroup(self) ==sub_appliances[1]):
+        #             if getUnit(self)>=2:
+        #                 self.amps = getWatts(self)                       
+        #                 self.amps= self.amps * 0.75
+        #                 self.jValue = self.amps
+        #                 return str(self.amps)
+                
+        #         if (getLoadgroup(self) == sub_appliances[3]):
+
+        #             if (getUnit(self)>=2 and getUnit(self)<=5):#2-5
+        #                 return "100% connected load"
+                
+        #             if (getUnit(self)>=6 and getUnit(self)<=20):#6-20
+        #                 return "90% connected load"
+
+        #             if (getUnit(self)>=21):#21+
+        #                 return "75% connected load"
+ 
+        #         else:
+        #             return 'yeet'
+
+        #     if (appliances(self)!='yeet'):          
+
+        #         self.appliance_result = Label (self.tab5, text = ""+appliances(self), bg='green2', borderwidth="2", relief="sunken", height = 1, width=20)
+        #         self.appliance_result.grid(row=2, column=1)
+
+        #         self.amps = Label (self.tab4, text = appliances(self)+ " A is required for "+ getLoadgroup(self), height=1) #Label
+        #         self.amps.grid(rowspan=7, columnspan=2)
+
+
+
+        def calculations():
+
             def getUnit(self): #get values
-                self.x = int(self.entry_unit.get())
+                self.x = int(self.entry_unit.get())                   
                 return self.x
+
             def getLoadgroup(self):
-                self.x = self.cntrl_lighting.get()
+                self.x = self.cntrl_loadgroup.get()
                 return self.x
             def getPoints(self):
-                self.x = int(self.tab2_entry_points.get())
+                self.x = int(self.entry_points.get())
+                self.general_points = self.x
                 return self.x
             def getWatts(self):
-                self.x = int(self.tab2_entry_watts.get())
+                self.x = int(self.entry_watts.get())
+                self.general_watts = self.x
                 return self.x  
-                     
+            
+
             def lighting(self):
                 self.amps = 0
                 
-                if (getLoadgroup(self)==sub_lighitng[0]):
+                if (getLoadgroup(self)==load_groups[1]):
                     if (getUnit(self)==1):
 
                         if (getPoints(self)<=20):
-                                self.amps = self.amps + 3
+                                self.amps = (self.amps + 3)/3
                                 self.aValue = self.amps
                                 return str(self.amps)
 
                         if (getPoints(self)>=40):
-                            self.amps = self.amps + 5
+                            self.amps = (self.amps + 5)/3
                             self.aValue = self.amps
                             return str(self.amps)
                             if (getPoints(self)>=60):
-                                self.amps = self.amps + 2
+                                self.amps = (self.amps + 2)/3
                                 self.aValue = self.amps
                                 return str(self.amps)
                                 if (getPoints(self)>=80):
-                                    self.amps = self.amps + 2
+                                    self.amps = (self.amps + 2)/3
                                     self.aValue = self.amps
                                     return str(self.amps)
                                     if (getPoints(self)>=100):
-                                        self.amps = self.amps + 2
+                                        self.amps = (self.amps + 2)/3
                                         self.aValue = self.amps
                                         return str(self.amps)
                         
@@ -295,45 +572,27 @@ class Application(Frame):
                         self.aValue = self.amps         
                         return str(self.amps)  
                              
-                if (getLoadgroup(self)==sub_lighitng[1]):
+                if (getLoadgroup(self)==load_groups[2]):
                     if(getUnit(self)==1):
                         self.amps = getWatts(self) * 0.75
                         self.aValue = self.amps
                         return str(self.amps)
 
                 else:
-                    return 'yeet'
+                    return 'lighting error'
+
+            if (lighting(self)!='lighting error'):
                       
-            self.light_result = Label (self.tab5, text = ""+lighting(self), bg='green2', borderwidth="2", relief="sunken", height = 1, width=20)
-            self.light_result.grid(row=1, column=1)
+                self.light_result = Label (self.tab5, text = ""+lighting(self), bg='green2', borderwidth="2", relief="sunken", height = 1, width=20)
+                self.light_result.grid(row=1, column=1)
 
-            self.amps = Label (self.tab2, text = lighting(self)+ " A is required for "+ getLoadgroup(self), height=1) #Label
-            self.amps.grid(rowspan=7, columnspan=2)
+                self.amps = Label (self.tab1, text = lighting(self)+ " A is required for "+ getLoadgroup(self), height=1) #Label
+                self.amps.grid(rowspan=7, columnspan=2)
+            
 
-###### LIGHTING END
-
-###### socket BEGIN
-
-        def calculationsB():
-    
-            def getUnit(self): #get values
-                self.x = int(self.entry_unit.get())
-                return self.x
-            def getLoadgroup(self):
-                self.x = self.cntrl_socket.get()
-                return self.x
-            def getPoints(self):
-                self.x = int(self.tab3_entry_points.get())
-                return self.x
-            def getWatts(self):
-                self.x = int(self.tab3_entry_watts.get())
-                return self.x  
-                     
-            def sockets(self):
+            def b(self):
                 self.amps = 0
-
-
-                if (getLoadgroup(self)==sub_outlets[0]):
+                if (getLoadgroup(self)==load_groups[4]):
 
                     if (getUnit(self)==1):
 
@@ -401,116 +660,27 @@ class Application(Frame):
                         else: 
                             return "you is a bum"
                              
-                if (getLoadgroup(self)==sub_outlets[1]):
+                if (getLoadgroup(self)==load_groups[5]):
                     self.bValue = 10
                     return "10"
-                if (getLoadgroup(self)==sub_outlets[2]):
+                if (getLoadgroup(self)==load_groups[6]):
                     self.bValue = 15
                     return "15"
                 
+                else:
+                    return 'yeet'
+            if (b(self)!='yeet'):          
+                self.light_result = Label (self.tab5, text = ""+b(self), bg='green2', borderwidth="2", relief="sunken", height = 1, width=20)
+                self.light_result.grid(row=2, column=1)              
+                self.amps = Label (self.tab3, text = b(self)+ " A is required for "+ getLoadgroup(self), height=1) #Label
+                self.amps.grid(rowspan=7, columnspan=2)           
             
-
-                else:
-                    return 'yeet'
-            if (sockets(self)!='yeet'):          
-                self.light_result = Label (self.tab5, text = ""+sockets(self), bg='green2', borderwidth="2", relief="sunken", height = 1, width=20)
-                self.light_result.grid(row=2, column=1)
-                
-                
-                self.amps = Label (self.tab3, text = sockets(self)+ " A is required for "+ getLoadgroup(self), height=1) #Label
-                self.amps.grid(rowspan=7, columnspan=2)
-
-###### socket END
-
-######appliance begin
- 
-        def calculationsJ():
-        
-            def getUnit(self): #get values
-                self.x = int(self.entry_unit.get())
-                return self.x
-            def getLoadgroup(self):
-                self.x = self.cntrl_appliance.get()
-                return self.x
-            def getPoints(self):
-                self.x = int(self.tab4_entry_points.get())
-                return self.x
-            def getWatts(self):
-                self.x = int(self.tab4_entry_watts.get())
-                return self.x  
-                     
-            def appliances(self):
-                self.amps = 0
-                self.aValuejValue = 0
-                             
-                if (getLoadgroup(self)==sub_appliances[0] or getLoadgroup(self)==sub_appliances[1] or getLoadgroup(self)==sub_appliances[2]):
-                    if (getUnit(self) == 1):
-                        return "Not applicable"
-
-                if (getLoadgroup(self)==sub_appliances[3]):
-                    if (getUnit(self) == 1):
-                        return "Fully connected load"
-
-                if (getLoadgroup(self) ==sub_appliances[0]):
-                    if getUnit(self)>=2:
-                        self.amps = getWatts(self)                       
-                        self.amps= self.amps * 0.5
-                        self.jValue = self.amps
-                        return str(self.amps)
-                
-                if (getLoadgroup(self) ==sub_appliances[1]):
-                    if getUnit(self)>=2:
-                        self.amps = getWatts(self)                       
-                        self.amps= self.amps * 0.75
-                        self.jValue = self.amps
-                        return str(self.amps)
-                
-                if (getLoadgroup(self) == sub_appliances[3]):
-
-                    if (getUnit(self)>=2 and getUnit(self)<=5):#2-5
-                        return "100% connected load"
-                
-                    if (getUnit(self)>=6 and getUnit(self)<=20):#6-20
-                        return "90% connected load"
-
-                    if (getUnit(self)>=21):#21+
-                        return "75% connected load"
- 
-                else:
-                    return 'yeet'
-
-            if (appliances(self)!='yeet'):          
-
-                self.appliance_result = Label (self.tab5, text = ""+appliances(self), bg='green2', borderwidth="2", relief="sunken", height = 1, width=20)
-                self.appliance_result.grid(row=2, column=1)
-
-                self.amps = Label (self.tab4, text = appliances(self)+ " A is required for "+ getLoadgroup(self), height=1) #Label
-                self.amps.grid(rowspan=7, columnspan=2)
-
-###### LIGHTING END
-
-###### OTHERS BEGIN 
-
-        def calculations():
-
-            def getUnit(self): #get values
-                self.x = int(self.entry_unit.get())                   
-                return self.x
-            def getLoadgroup(self):
-                self.x = self.cntrl_loadgroup.get()
-                return self.x
-            def getPoints(self):
-                self.x = int(self.entry_points.get())
-                return self.x
-            def getWatts(self):
-                self.x = int(self.entry_watts.get())
-                return self.x  
-                     
+                   
             def c(self): #WORKS
                 self.amps = 0
                 self.cValue = 0
 
-                if (getLoadgroup(self)==load_groups[0]):
+                if (getLoadgroup(self)==load_groups[7]):
 
                     if (getUnit(self)==1):
                         self.amps = getWatts(self)                       
@@ -544,7 +714,7 @@ class Application(Frame):
                 self.amps = 0
                 self.dValue = 0
 
-                if (getLoadgroup(self)==load_groups[1]):
+                if (getLoadgroup(self)==load_groups[8]):
 
                     if (getUnit(self)==1):
                         self.amps = getWatts(self)                       
@@ -582,7 +752,7 @@ class Application(Frame):
             def e (self): #WORKS
                 self.amps = 0
                 self.eValue = 0
-                if (getLoadgroup(self)==load_groups[2]):
+                if (getLoadgroup(self)==load_groups[8]):
                     if (getUnit(self)==1):
                         self.amps = getWatts(self)                       
                         self.amps= self.amps * 0.333
@@ -614,7 +784,7 @@ class Application(Frame):
                 self.amps = 0
                 self.fValue = 0
 
-                if (getLoadgroup(self)==load_groups[3]):
+                if (getLoadgroup(self)==load_groups[9]):
 
                     if (getUnit(self)==1):
 
@@ -648,7 +818,7 @@ class Application(Frame):
             def g (self):#SPAAAA??? HOW TO DO THIS ONE WHAT DO HECK 
                 self.amps = 0
 
-                if (getLoadgroup(self)==load_groups[4]):
+                if (getLoadgroup(self)==load_groups[10]):
                     if (getUnit(self)==1):
                         
                         return str(self.amps)
@@ -671,7 +841,7 @@ class Application(Frame):
                 
             def h (self):
                 self.amps = 0
-                if (getLoadgroup(self)==load_groups[5]):
+                if (getLoadgroup(self)==load_groups[11]):
                     if (getUnit(self)==1):
                         return "N/A"
                     if (getUnit(self)>=2):
@@ -687,9 +857,9 @@ class Application(Frame):
                 self.amps.grid(rowspan=7, columnspan=2)      
 
             def i (self):
-                self.amps = 0
+                self.amps = 0 
                 iValue = 0
-                if (getLoadgroup(self)==load_groups[6]):
+                if (getLoadgroup(self)==load_groups[12]):
                     if (getUnit(self)==1):
                         return "N/A"
                         return str(self.amps)
@@ -710,10 +880,59 @@ class Application(Frame):
 
                 self.amps = Label (self.tab1, text = i(self)+ " A is required for "+ getLoadgroup(self), height=1) #Label
                 self.amps.grid(rowspan=7, columnspan=2)     
+            
+            def appliances(self):
+                self.amps = 0
+                self.aValuejValue = 0
+                             
+                if (getLoadgroup(self)==sub_appliances[13] or getLoadgroup(self)==load_groups[1] or getLoadgroup(self)==load_groups[2]):
+                    if (getUnit(self) == 1):
+                        return "Not applicable"
+
+                if (getLoadgroup(self)==sub_appliances[14]):
+                    if (getUnit(self) == 1):
+                        return "Fully connected load"
+
+                if (getLoadgroup(self) ==sub_appliances[15]):
+                    if getUnit(self)>=2:
+                        self.amps = getWatts(self)                       
+                        self.amps= self.amps * 0.5
+                        self.jValue = self.amps
+                        return str(self.amps)
+                
+                if (getLoadgroup(self) ==sub_appliances[16]):
+                    if getUnit(self)>=2:
+                        self.amps = getWatts(self)                       
+                        self.amps= self.amps * 0.75
+                        self.jValue = self.amps
+                        return str(self.amps)
+                
+                if (getLoadgroup(self) == sub_appliances[17]):
+
+                    if (getUnit(self)>=2 and getUnit(self)<=5):#2-5
+                        return "100% connected load"
+                
+                    if (getUnit(self)>=6 and getUnit(self)<=20):#6-20
+                        return "90% connected load"
+
+                    if (getUnit(self)>=21):#21+
+                        return "75% connected load"
+ 
+                else:
+                    return 'yeet'
+
+            if (appliances(self)!='yeet'):          
+
+                self.appliance_result = Label (self.tab5, text = ""+appliances(self), bg='green2', borderwidth="2", relief="sunken", height = 1, width=20)
+                self.appliance_result.grid(row=2, column=1)
+
+                self.amps = Label (self.tab4, text = appliances(self)+ " A is required for "+ getLoadgroup(self), height=1) #Label
+                self.amps.grid(rowspan=7, columnspan=2)
+
 
             def k (self):
                 self.amps = 0
-                if (getLoadgroup(self)==load_groups[7]):
+                if (getLoadgroup(self)==load_groups[18]):
                     if (getUnit(self)==1):
                         
                         return str(self.amps)
@@ -732,7 +951,7 @@ class Application(Frame):
 
                 self.amps = Label (self.tab1, text = k(self)+ " A is required for "+ getLoadgroup(self), height=1) #Label
                 self.amps.grid(rowspan=7, columnspan=2)     
-###### OTHERS END
+
                 
                 
         def update ():
@@ -740,30 +959,88 @@ class Application(Frame):
 
             self.total.config(text = total_sum,bg='green2', borderwidth="2", relief="sunken", height = 1, width=20)
 
+        def xlsx_test():
+            workbook = xlsxwriter.Workbook('please-work.xlsx')
+            worksheet = workbook.add_worksheet()
+
+            worksheet.set_column('A:A', 20)
+
+            worksheet.write('A1', 'Number of Units')
+            worksheet.write('B1', int(self.entry_unit.get()))
+
+            worksheet.write('A2', 'Load Group')
+            worksheet.write('B2', 'Watts')
+            worksheet.write('C2', 'Points')
+            worksheet.write('D2', 'Amperes')
+
+            worksheet.write('A3', 'Lighting (a)')
+            worksheet.write('B3', int(self.light_watts))
+            worksheet.write('C3', int(self.light_points))
+            worksheet.write('D3', int(self.aValue))
+
+            worksheet.write('A4', 'Outlets (b)')
+            worksheet.write('B4', int(self.outlets_watts))
+            worksheet.write('C4', int(self.outlets_points))
+            worksheet.write('D4', int(self.bValue))
+
+            worksheet.write('A5', 'Appliances (c)')
+            worksheet.write('B5', int(self.general_watts))
+            worksheet.write('C5', int(self.general_points))
+            worksheet.write('D5', int(self.cValue))
+
+            worksheet.write('A6', 'Heating/Cooling (d)')
+            worksheet.write('B6', int(self.general_watts))
+            worksheet.write('C6', int(self.general_points))
+            worksheet.write('D6', int(self.dValue))
+
+            worksheet.write('A7', 'Heating/Cooling (e)')
+            worksheet.write('B7', int(self.general_watts))
+            worksheet.write('C7', int(self.general_points))
+            worksheet.write('D7', int(self.eValue))
+
+            worksheet.write('A8', 'Heating/Cooling (f)')
+            worksheet.write('B8', int(self.general_watts))
+            worksheet.write('C8', int(self.general_points))
+            worksheet.write('D8', int(self.fValue))
+
+            worksheet.write('A9', 'Heating/Cooling (g)')
+            worksheet.write('B9', int(self.general_watts))
+            worksheet.write('C9', int(self.general_points))
+            worksheet.write('D9', int(self.gValue))
+
+            worksheet.write('A10', 'Heating/Cooling (f)')
+            worksheet.write('B10', int(self.general_watts))
+            worksheet.write('C10', int(self.general_points))
+            worksheet.write('D10', int(self.fValue))
+
+            
+
+
+            workbook.close()
+
 
         #ADD BUTTONS#
-        self.add_socket = Button(self.tab4, text="Add", bg="light grey", command=calculationsJ) #ADD BUTTON
-        self.add_socket.grid(row = 6,column=1)  
-
-        self.add_socket = Button(self.tab3, text="Add", bg="light grey", command=calculationsB) #ADD BUTTON
-        self.add_socket.grid(row = 6,column=1)  
-
-        self.add_lighting = Button(self.tab2, text="Add", bg="light grey", command=calculationsAll) #ADD BUTTON
-        self.add_lighting.grid(row = 6,column=1)        
 
         self.add_load = Button(self.tab1, text="Add", bg="light grey", command=calculations) #ADD BUTTON
         self.add_load.grid(row = 6,column=1)  
 
         self.btn_calculations = Button (self.tab5, text="Update", height=1, width=20, command=update)
         self.btn_calculations.grid (row=15,column=1)
+
+        self.btn_calculations = Button (self.tab5, text="Write to excel", command=xlsx_test, height=1, width=20)
+        self.btn_calculations.grid (row=15, column=0)
         #ADD BUTTONS#
 
 
-
+        
+        
 
         #TOOLBARS#  
         def doNothing():
             print("yes boss")
+        
+
+
         
         menu = Menu(control)
         control.config(menu=menu)
