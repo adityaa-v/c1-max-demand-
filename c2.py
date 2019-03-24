@@ -37,6 +37,13 @@ class Application(Frame):
     iValue = 0
     jValue = 0
 
+    a2Value=0
+    b2Value=0
+    c2Value=0
+    d2Value=0
+    e2Value=0
+
+
     def __init__(self, master):
         """ Initialise the Frame. """
         super(Application, self).__init__(master)
@@ -110,7 +117,7 @@ class Application(Frame):
 
         self.c2_btn = Button(self.homeTab, text="C2", bg="light grey", command=self.c2_redirect, width=5).grid(row = 9, column=1)
 
-        self.c3_btn = Button(self.homeTab, text="C3", bg="light grey", command=self.unit_redirect, width=5).grid(row =9, column=2)
+        self.c3_btn = Button(self.homeTab, text="C3", bg="light grey", command=self.c3_redirect, width=5).grid(row =9, column=2)
 
         self.lbl_resulta = Label (self.resultTab, text = "Lighting (a): ", height = 1, width=20).grid(row=1, column=0)
         self.result_a = Label (self.resultTab, text = "yeet", height = 1, width=20).grid(row=1, column=1)
@@ -351,9 +358,9 @@ class Application(Frame):
                     if (getUnit(self)==1):
 
                         if (getPoints(self)<=20):
-                                self.amps = (self.amps + 3)/3
-                                self.aValue = self.amps
-                                return str(self.amps)
+                            self.amps = (self.amps + 3)/3
+                            self.aValue = self.amps
+                            return str(self.amps)
 
                         if (getPoints(self)>=40):
                             self.amps = (self.amps + 5)/3
@@ -492,8 +499,7 @@ class Application(Frame):
                 self.light_result.grid(row=2, column=1)              
                 self.amps = Label (self.tab3, text = b(self)+ " A is required for "+ getLoadgroup(self), height=1) #Label
                 self.amps.grid(rowspan=7, columnspan=2)           
-            
-                   
+                             
             def c(self): #WORKS
                 self.amps = 0
                 self.cValue = 0
@@ -518,8 +524,6 @@ class Application(Frame):
                 
                 else:
                     return 'yeet1'
-                
-
             if (c(self)!='yeet1'):
                 
                 self.light_result = Label (self.tab5, text = ""+c(self), bg='green2', borderwidth="2", relief="sunken", height = 1, width=20)
@@ -796,42 +800,186 @@ class Application(Frame):
         self.om_loadgroupc2.grid(row=2, column=1)
 
         self.lbl_wattsc2 = Label (self.c2tab, text = "Watts", height=1, width=20) #Label
-        self.lbl_wattsc2.grid(row=5, column = 0)
+        self.lbl_wattsc2.grid(row=3, column = 0)
 
         self.entry_wattsc2 = StringVar()  
         self.entry_wattsc2 = Entry (self.c2tab) ######## ENTRY BOX
-        self.entry_wattsc2.grid(row=5, column=1)
+        self.entry_wattsc2.grid(row=3, column=1)
+
+        self.lbl_outletc2 = Label (self.c2tab, text = "Number of Outlets: ", height=1, width=20) #Label
+        self.lbl_outletc2.grid(row=4, column = 0)
+
+        self.entry_outletc2 = StringVar()  
+        self.entry_outletc2 = Entry (self.c2tab) ######## ENTRY BOX
+        self.entry_outletc2.grid(row=4, column=1)
 
         def calculationsc2():
     
-            def getUnit(self): #get values
+            def getGroup(self): #get values
                 self.x = self.groupc2.get()                   
                 return self.x
             def getLoadgroup(self):
                 self.x = self.cntrl_loadgroupc2.get()
                 return self.x
-            def getPoints(self):
-                self.x = int(self.entry_pointsc2.get())
-                self.general_points = self.x
+            def getOutlet(self):
+                self.x = int(self.entry_outletc2.get())
                 return self.x
             def getWatts(self):
                 self.x = int(self.entry_wattsc2.get())
                 self.general_watts = self.x
                 return self.x  
             
-            def lighting(self):
+            def a(self):
                 self.amps = 0
-                
-                if (getLoadgroup(self)==load_groups[1]):
-                    if (getUnit(self)==1):
-                        return 'false'
+                if (getLoadgroup(self)==load_groupsc2[0]): #load group lighting
+                    if (getGroup(self)==groupc2_options[0]):
+                        self.amps = getWatts(self) * 0.75
+                        a2Value = self.amps
+                        return str(self.amps)
+                    if (getGroup(self)==groupc2_options[1]):
+                        self.amps = getWatts(self)
+                        a2Value = self.amps
+                        return str(self.amps)
+                else:
+                    return 'c2a'
+            if (a(self)!='c2a'):                     
+                self.c2light_result = Label (self.c2tab1, text = ""+a(self), bg='green2', borderwidth="2", relief="sunken", height = 1, width=20)
+                self.c2light_result.grid(row=1, column=1)
+                self.c2amps = Label (self.c2tab, text = a(self)+ " A is required for "+ getLoadgroup(self), height=1) #Label
+                self.c2amps.grid(rowspan=7, columnspan=2)
+            
+            def b(self):
+                self.amps = 0
+                if (getLoadgroup(self)==load_groupsc2[2]): #load group lighting
+                    if (getGroup(self)==groupc2_options[0]):
+                        if(getOutlet(self) ==1):
+                            self.amps = 1000
+                            b2Value = self.amps
+                            return str(self.amps)
+                        if(getOutlet(self) > 1 ):
+                            self.amps = getOutlet(self) - 1
+                            self.amps = self.amps * 400
+                            self.amps = self.amps + 1000
+                            b2Value = self.amps
+                            return str(self.amps)
+                    if (getGroup(self)==groupc2_options[1]):
+                        if(getOutlet(self) == 1):
+                            self.amps = 1000
+                            b2Value = self.amps
+                            return str(self.amps)
+                        if(getOutlet(self) > 1 ):
+                            self.amps = getOutlet(self) - 1
+                            self.amps = self.amps * 750
+                            self.amps = self.amps + 1000
+                            b2Value = self.amps
+                            return str(self.amps)
+                else:
+                    return 'c2b'
+
+            if (b(self)!='c2b'):                     
+                self.c2socket_result = Label (self.c2tab1, text = ""+b(self), bg='green2', borderwidth="2", relief="sunken", height = 1, width=20)
+                self.c2socket_result.grid(row=1, column=1)
+                self.c2amps = Label (self.c2tab, text = b(self)+ " A is required for "+ getLoadgroup(self), height=1) #Label
+                self.c2amps.grid(rowspan=7, columnspan=2)
+            
+            def c(self):
+                self.amps = 0
+                if (getLoadgroup(self)==load_groupsc2[3]):
+                    if (getGroup(self)==groupc2_options[0] or groupc2_options[1]): #load group lighting
+                        if (getOutlet(self) == 1):
+                            self.amps = 1000
+                            c2Value = self.amps
+                            return str(self.amps)
+                        if(getOutlet(self)>=2 ):
+                            self.amps = getOutlet(self) - 1
+                            self.amps = self.amps * 100 + 1000
+                            c2Value = self.amps
+                            return str(self.amps)
+                else:
+                    return 'c2c'
+            if (c(self)!='c2c'):                     
+                self.c2bii_result = Label (self.c2tab1, text = ""+c(self), bg='green2', borderwidth="2", relief="sunken", height = 1, width=20)
+                self.c2bii_result.grid(row=1, column=1)
+                self.c2biiamps = Label (self.c2tab, text = c(self)+ " A is required for "+ getLoadgroup(self), height=1) #Label
+                self.c2biiamps.grid(rowspan=7, columnspan=2)
+
+            # def d(self):
+            #     self.amps = 0
+            #     if (getLoadgroup(self)==load_groupsc2[4]):
+            #         if (getGroup(self)==groupc2_options[0] or groupc2_options[1]): #load group lighting
+            #             if (getOutlet(self) == 1):
+            #                 self.amps = 1000
+            #                 c2Value = self.amps
+            #                 return str(self.amps)
+            #             if(getOutlet(self)>=2 ):
+            #                 self.amps = getOutlet(self) - 1
+            #                 self.amps = self.amps * 100 + 1000
+            #                 c2Value = self.amps
+            #                 return str(self.amps)
+            #     else:
+            #         return 'c2d'
+            # if (d(self)!='c2d'):                     
+            #     self.c2biii_result = Label (self.c2tab1, text = ""+d(self), bg='green2', borderwidth="2", relief="sunken", height = 1, width=20)
+            #     self.c2biii_result.grid(row=1, column=1)
+            #     self.c2biiiamps = Label (self.c2tab, text = d(self)+ " A is required for "+ getLoadgroup(self), height=1) #Label
+            #     self.c2biiiamps.grid(rowspan=7, columnspan=2)
+
+            
+
+
 
                         
-
+        self.c2add = Button(self.c2tab, text="Add", bg="light grey", command=calculationsc2) #ADD BUTTON
+        self.c2add.grid(row = 6,column=1)   
 
 
 
                 
+
+
+    def c3_redirect(self):
+        control = Toplevel()
+        control.geometry("450x375")
+        control.title("TABLE C3")
+
+        nb = ttk.Notebook(control)
+        nb.grid(row=1, column=0, columnspan=50, rowspan=49, sticky='NESW')
+
+        self.c3tab = ttk.Frame(nb) #tab 1 creation
+        nb.add(self.c3tab, text='Energy Demand')       
+        self.c3tab1 = ttk.Frame(nb) #tab 2 creation
+        nb.add(self.c3tab1, text='Results')
+
+        self.living_unitsc3 = Label (self.c3tab, text = "test", height=1, width=20, font='Helvetica 12 bold') #Label
+        self.living_unitsc3.grid(rowspan=1, columnspan=2)
+
+        self.lbl_loadc3= Label (self.c3tab, text = "Type of Load", height=1, width=20) #Label
+        self.lbl_loadc3.grid(row=2, column = 0)
+
+        # self.cntrl_loadgroupc3 = StringVar(control)
+        # self.cntrl_loadgroupc3.set("-") # default value
+        # self.om_loadgroupc3 = OptionMenu(self.c3tab, self.cntrl_loadgroupc3, *load_groupsc3)
+        # self.om_loadgroupc3.config(width=35)
+        # self.om_loadgroupc3.grid(row=2, column=1)
+
+        self.lbl_wattsc3 = Label (self.c3tab, text = "Watts", height=1, width=20) #Label
+        self.lbl_wattsc3.grid(row=3, column = 0)
+
+        self.entry_wattsc3 = StringVar()  
+        self.entry_wattsc3 = Entry (self.c3tab) ######## ENTRY BOX
+        self.entry_wattsc3.grid(row=3, column=1)
+
+        self.lbl_outletc3 = Label (self.c3tab, text = "Number of Outlets: ", height=1, width=20) #Label
+        self.lbl_outletc3.grid(row=4, column = 0)
+
+        self.entry_outletc3 = StringVar()  
+        self.entry_outletc3 = Entry (self.c3tab) ######## ENTRY BOX
+        self.entry_outletc3.grid(row=4, column=1)
+
+
+
+
+    
     def update ():
         total_sum = self.aValue + self.bValue + self.cValue + self.dValue + self.eValue + self.fValue 
 
@@ -900,7 +1048,7 @@ class Application(Frame):
         #ADD BUTTONS#
 
         self.add_load = Button(self.tab1, text="Add", bg="light grey", command=calculations) #ADD BUTTON
-        self.add_load.grid(row = 6,column=1)  
+        self.add_load.grid(row = 6,column=1) 
 
         self.btn_calculations = Button (self.tab5, text="Update", height=1, width=20, command=update)
         self.btn_calculations.grid (row=15,column=1)
